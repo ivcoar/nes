@@ -6,7 +6,12 @@
 
 using namespace std;
 
-void Loader::loadRom(const char *name)
+bool Loader::loadRom(const char* name)
+{
+  return Loader::loadRom(name, new Header());
+}
+
+bool Loader::loadRom(const char *name, Header* header)
 {
 
   ifstream romfile(name, ios::binary);
@@ -17,18 +22,22 @@ void Loader::loadRom(const char *name)
   ubyte* data = new ubyte[romsize];
   romfile.read((char*) data, romsize);
   
-  Header header;
   for (int i = 0; i < 16; i++) {
-    header.raw[i] = data[i];
+    header->raw[i] = data[i];
   }
 
-  int mapper = (header.mapperHigh << 4) | header.mapperLow;
+  if (!(header->b0 == 'N' && header->b1 == 'E' && header->b2 == 'S'))
+    return false;
 
+  int mapper = (header->mapperHigh << 4) | header->mapperLow;
+  
   cout << name << endl;
   cout << "--- HEADER ---" << endl;
-  cout << "0-3 " << header.b0 << header.b1 << header.b2 << header.b3 << endl;
-  cout << "ROM Banks: " << (int) header.romBanks << endl;
-  cout << "VROM Banks: " << (int) header.vromBanks << endl;
+  cout << "0-3 " << header->b0 << header->b1 << header->b2 << header->b3 << endl;
+  cout << "ROM Banks: " << (int) header->romBanks << endl;
+  cout << "VROM Banks: " << (int) header->vromBanks << endl;
   cout << "Mapper: " << mapper << endl; 
+
+  return true;
   
 }

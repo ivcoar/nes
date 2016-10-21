@@ -47,6 +47,7 @@ namespace Loader
   };
  
 
-  void loadRom(const char* name);
-
+  bool loadRom(const char* name);
+  bool loadRom(const char* name, Header* header);
+  
 }

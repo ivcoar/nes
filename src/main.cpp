@@ -12,9 +12,14 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 
-  Loader::loadRom("Super Mario Bros.nes");
+  Loader::Header header;
+  
+  Loader::loadRom("Super Mario Bros.nes", &header);
   Loader::loadRom("Mega Man (USA).nes");
   Loader::loadRom("Castlevania (USA).nes");
+
+  cout << "=====" << endl;
+  cout << (header.region ? "PAL" : "NTSC") << endl;
   
   return 0;
 }
