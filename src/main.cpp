@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
   Loader::Header header;
   
   Loader::loadRom("Super Mario Bros.nes", &header);
-  // Loader::loadRom("Mega Man (USA).nes");
-  // Loader::loadRom("Castlevania (USA).nes");
+  Loader::loadRom("Mega Man (USA).nes");
+  Loader::loadRom("Castlevania (USA).nes");
 
   return 0;
 }

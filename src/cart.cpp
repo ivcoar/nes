@@ -10,7 +10,7 @@ Cart::Cart(Loader::Header* h, ubyte* data)
   
   header = h;
 
-  ubyte mapperid = header->mapperHigh << 4 | header->mapperLow;
+  int mapperid = header->mapperHigh << 4 | header->mapperLow;
   switch (mapperid) {
   case 0:
     mapper = new Mapper2(this);

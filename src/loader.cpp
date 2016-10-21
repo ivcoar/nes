@@ -2,16 +2,17 @@
 
 #include <iostream>
 #include <fstream>
-//#include <bitfield>
+
+#include "cart.h"
 
 using namespace std;
 
-bool Loader::loadRom(const char* name)
+Cart* Loader::loadRom(const char* name)
 {
   return Loader::loadRom(name, new Header());
 }
 
-bool Loader::loadRom(const char *name, Header* header)
+Cart* Loader::loadRom(const char *name, Header* header)
 {
 
   ifstream romfile(name, ios::binary);
@@ -19,25 +20,34 @@ bool Loader::loadRom(const char *name, Header* header)
   auto romsize = romfile.tellg();
   romfile.seekg(0, ios::beg);
 
-  ubyte* data = new ubyte[romsize];
-  romfile.read((char*) data, romsize);
-  
+  romfile.read((char*) header->raw, 16);
+  /*
   for (int i = 0; i < 16; i++) {
     header->raw[i] = data[i];
   }
+  */
 
+  auto data = new ubyte[header->romBanks * 0x4000 + header->vromBanks * 0x2000];
+  romfile.seekg(16);
+  romfile.read((char*) data, (int)romsize - 16);
+
+  romfile.close();
+  
   if (!(header->b0 == 'N' && header->b1 == 'E' && header->b2 == 'S'))
-    return false;
+    return nullptr;
 
-  int mapper = (header->mapperHigh << 4) | header->mapperLow;
+  ubyte mapper = header->mapperHigh << 4 | header->mapperLow;
   
   cout << name << endl;
   cout << "--- HEADER ---" << endl;
   cout << "0-3 " << header->b0 << header->b1 << header->b2 << header->b3 << endl;
   cout << "ROM Banks: " << (int) header->romBanks << endl;
   cout << "VROM Banks: " << (int) header->vromBanks << endl;
-  cout << "Mapper: " << mapper << endl; 
+  cout << "Mapper: " << (int) mapper << endl; 
+  
 
-  return true;
+  auto cart = new Cart(header, data);
+  
+  return cart;
   
 }
